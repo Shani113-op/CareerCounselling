@@ -1,0 +1,749 @@
+/* Interest Form Components */
+.interest-form-container {
+    padding: 3rem 0;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.form-section {
+    background: var(--bg-white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-light);
+}
+
+.form-section h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+}
+
+.interests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.interest-item {
+    background: var(--bg-light);
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.interest-item:hover {
+    border-color: var(--primary-blue);
+    background: var(--light-blue);
+}
+
+.interest-item.selected {
+    border-color: var(--primary-blue);
+    background: var(--primary-blue);
+    color: white;
+}
+
+.interest-item i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Results Section */
+.results-section {
+    background: var(--bg-white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.results-header {
+    margin-bottom: 2rem;
+}
+
+.results-header h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.filter-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-tag {
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filter-tag:hover,
+.filter-tag.active {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+.career-results {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.career-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+
+.career-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.career-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.career-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.career-category {
+    background: var(--light-blue);
+    color: var(--primary-blue);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.career-overview {
+    color: var(--text-medium);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.career-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.detail-section h4 {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.skill-tags,
+.college-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.skill-tag,
+.college-tag {
+    background: var(--light-green);
+    color: var(--primary-green);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+.roadmap-list {
+    list-style: none;
+    padding: 0;
+}
+
+.roadmap-list li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-medium);
+    font-size: 0.9rem;
+}
+
+.roadmap-list li:before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--primary-blue);
+    font-weight: bold;
+}
+
+.salary-info {
+    background: linear-gradient(135deg, var(--light-blue), var(--light-green));
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.salary-range {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-bottom: 0.25rem;
+}
+
+.growth-info {
+    font-size: 0.9rem;
+    color: var(--text-medium);
+}
+
+/* Chat Components */
+.chat-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+}
+
+.chat-messages {
+    height: 500px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--bg-light);
+}
+
+.message {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.bot-message .message-avatar {
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+    color: white;
+}
+
+.user-message .message-avatar {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    color: white;
+}
+
+.message-content {
+    flex: 1;
+    background: var(--bg-white);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.message-content p {
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.message-content ul {
+    margin-left: 1rem;
+    color: var(--text-medium);
+}
+
+.message-content ul li {
+    margin-bottom: 0.25rem;
+}
+
+.chat-input-container {
+    padding: 1rem;
+    background: var(--bg-white);
+    border-top: 1px solid var(--border-light);
+}
+
+.chat-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    transition: var(--transition);
+}
+
+.chat-input input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    background: var(--bg-white);
+}
+
+.chat-input button {
+    padding: 1rem;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.chat-input button:hover {
+    background: var(--accent-blue);
+}
+
+.quick-questions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.quick-question {
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-medium);
+}
+
+.quick-question:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+/* Quiz Components */
+.quiz-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    border: 1px solid var(--border-light);
+}
+
+.quiz-progress {
+    margin-bottom: 2rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-light);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: var(--text-medium);
+}
+
+.quiz-question {
+    margin-bottom: 2rem;
+}
+
+.question-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+}
+
+.quiz-options {
+    display: grid;
+    gap: 1rem;
+}
+
+.quiz-option {
+    background: var(--bg-light);
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+}
+
+.quiz-option:hover {
+    border-color: var(--primary-blue);
+    background: var(--light-blue);
+}
+
+.quiz-option.selected {
+    border-color: var(--primary-blue);
+    background: var(--primary-blue);
+    color: white;
+}
+
+.quiz-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.quiz-results {
+    text-align: center;
+}
+
+.personality-type {
+    background: linear-gradient(135deg, var(--light-blue), var(--light-green));
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+}
+
+.personality-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+}
+
+.personality-description {
+    font-size: 1.1rem;
+    color: var(--text-medium);
+    line-height: 1.6;
+}
+
+/* Careers Page Components */
+.careers-container {
+    padding: 2rem 0;
+}
+
+.careers-filters {
+    background: var(--bg-white);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-light);
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 1rem 3rem 1rem 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    transition: var(--transition);
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    background: var(--bg-white);
+}
+
+.search-box i {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+
+.category-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.category-filter {
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-medium);
+}
+
+.category-filter:hover,
+.category-filter.active {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+.careers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Colleges Page Components */
+.colleges-container {
+    padding: 2rem 0;
+}
+
+.stream-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    color: var(--text-medium);
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+.colleges-content {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    border: 1px solid var(--border-light);
+}
+
+.college-section {
+    margin-bottom: 2rem;
+}
+
+.college-section h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.colleges-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.college-item {
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    transition: var(--transition);
+}
+
+.college-item:hover {
+    border-color: var(--primary-blue);
+    background: var(--light-blue);
+}
+
+.college-name {
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.college-location {
+    color: var(--text-medium);
+    font-size: 0.9rem;
+}
+
+.exams-section {
+    background: var(--light-blue);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+}
+
+.exams-section h4 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+}
+
+.exam-item {
+    background: var(--bg-white);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-light);
+}
+
+.exam-name {
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.exam-description {
+    color: var(--text-medium);
+    font-size: 0.9rem;
+}
+
+/* Contact Page Components */
+.contact-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    padding: 3rem 0;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.contact-info {
+    background: var(--bg-white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.contact-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.contact-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.contact-details h3 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.contact-details p {
+    color: var(--text-medium);
+}
+
+.contact-form {
+    background: var(--bg-white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    background: var(--bg-white);
+}
