@@ -289,7 +289,7 @@ function buildCareerCards(careers, container) {
     });
 }
 
-// AI Chat component
+// AI Chat component - Updated to use OpenAI API
 function initializeAIChat() {
     const chatInput = $('#chat-input');
     const sendButton = $('#send-message');
@@ -298,13 +298,16 @@ function initializeAIChat() {
     
     if (!chatInput || !sendButton) return;
     
+    // Add API key management button to chat interface
+    addApiKeyManagement();
+    
     // Handle send message
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         const message = chatInput.value.trim();
         if (message) {
             addUserMessage(message);
             chatInput.value = '';
-            handleAIResponse(message);
+            await handleAIResponse(message);
         }
     };
     
@@ -318,12 +321,112 @@ function initializeAIChat() {
     
     // Handle quick questions
     quickQuestions.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const question = btn.getAttribute('data-question');
             addUserMessage(question);
-            handleAIResponse(question);
+            await handleAIResponse(question);
         });
     });
+}
+
+function addApiKeyManagement() {
+    const chatContainer = $('.chat-container');
+    if (!chatContainer) return;
+    
+    // Check if already added
+    if ($('.api-key-management')) return;
+    
+    const apiKeyManagement = document.createElement('div');
+    apiKeyManagement.className = 'api-key-management';
+    apiKeyManagement.innerHTML = `
+        <div class="api-status">
+            <span class="api-status-text">AI Mode: ${openAIService.apiKey ? 'OpenAI API' : 'Demo Mode'}</span>
+            <button class="api-key-btn" id="manage-api-key">
+                <i class="fas fa-key"></i>
+                ${openAIService.apiKey ? 'Update API Key' : 'Add API Key'}
+            </button>
+            ${openAIService.apiKey ? '<button class="api-clear-btn" id="clear-conversation"><i class="fas fa-trash"></i> Clear Chat</button>' : ''}
+        </div>
+    `;
+    
+    // Add styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .api-key-management {
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem;
+        }
+        
+        .api-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .api-status-text {
+            font-size: 0.9rem;
+            color: var(--text-medium);
+        }
+        
+        .api-key-btn, .api-clear-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .api-key-btn:hover, .api-clear-btn:hover {
+            background: var(--accent-blue);
+        }
+        
+        .api-clear-btn {
+            background: var(--text-light);
+        }
+        
+        .api-clear-btn:hover {
+            background: #ef4444;
+        }
+    `;
+    
+    if (!$('#api-key-management-styles')) {
+        style.id = 'api-key-management-styles';
+        document.head.appendChild(style);
+    }
+    
+    chatContainer.insertBefore(apiKeyManagement, chatContainer.firstChild);
+    
+    // Handle API key management
+    $('#manage-api-key').addEventListener('click', () => {
+        openAIService.showApiKeySetup();
+    });
+    
+    // Handle clear conversation
+    const clearBtn = $('#clear-conversation');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear the conversation history?')) {
+                openAIService.clearConversation();
+                const chatMessages = $('#chat-messages');
+                // Keep only the initial bot message
+                const initialMessage = chatMessages.querySelector('.message.bot-message');
+                chatMessages.innerHTML = '';
+                if (initialMessage) {
+                    chatMessages.appendChild(initialMessage);
+                }
+                showNotification('Conversation cleared', 'success');
+            }
+        });
+    }
 }
 
 function addUserMessage(message) {
@@ -362,28 +465,52 @@ async function handleAIResponse(userMessage) {
     chatMessages.appendChild(typingEl);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
-    // Simulate AI processing
-    await simulateDelay(2000);
-    
-    // Remove typing indicator
-    chatMessages.removeChild(typingEl);
-    
-    // Add AI response
-    const response = getChatResponse(userMessage);
-    const responseEl = document.createElement('div');
-    responseEl.className = 'message bot-message';
-    
-    responseEl.innerHTML = `
-        <div class="message-avatar">
-            <i class="fas fa-robot"></i>
-        </div>
-        <div class="message-content">
-            <p>${response}</p>
-        </div>
-    `;
-    
-    chatMessages.appendChild(responseEl);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    try {
+        // Get AI response using OpenAI service
+        const response = await openAIService.getChatResponse(userMessage);
+        
+        // Remove typing indicator
+        chatMessages.removeChild(typingEl);
+        
+        // Add AI response
+        const responseEl = document.createElement('div');
+        responseEl.className = 'message bot-message';
+        
+        responseEl.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+                <p>${response.replace(/\n/g, '<br>')}</p>
+            </div>
+        `;
+        
+        chatMessages.appendChild(responseEl);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+    } catch (error) {
+        // Remove typing indicator
+        if (chatMessages.contains(typingEl)) {
+            chatMessages.removeChild(typingEl);
+        }
+        
+        // Show error message
+        const errorEl = document.createElement('div');
+        errorEl.className = 'message bot-message error';
+        errorEl.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="message-content">
+                <p>Sorry, I encountered an error. Please try again.</p>
+            </div>
+        `;
+        
+        chatMessages.appendChild(errorEl);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        console.error('Chat error:', error);
+    }
 }
 
 // Quiz component
