@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/auth.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -28,6 +29,26 @@
                 <a href="#" class="nav-link" data-page="contact">Contact</a>
             </div>
             <div class="nav-actions">
+                <div class="user-menu" id="user-menu" style="display: none;">
+                    <div class="user-info">
+                        <span class="user-name" id="user-name"></span>
+                        <span class="user-plan" id="user-plan"></span>
+                    </div>
+                    <div class="user-dropdown">
+                        <button class="user-btn" id="user-btn">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                        <div class="dropdown-menu" id="dropdown-menu">
+                            <a href="#" onclick="showProfile()"><i class="fas fa-user"></i> Profile</a>
+                            <a href="#" onclick="showUpgrade()"><i class="fas fa-crown"></i> Upgrade</a>
+                            <a href="#" onclick="authService.logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-buttons" id="auth-buttons">
+                    <a href="pages/login.html" class="btn-secondary">Login</a>
+                    <a href="pages/signup.html" class="btn-primary">Sign Up</a>
+                </div>
                 <button class="theme-toggle" id="theme-toggle">
                     <i class="fas fa-moon"></i>
                 </button>
@@ -108,6 +129,58 @@
             </section>
         </div>
 
+        <!-- AI Chat Page -->
+        <div id="ai-chat-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1>AI Career Assistant</h1>
+                    <p>Ask me anything about careers, education, and your future!</p>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-status" id="chat-status">
+                        <div class="usage-info">
+                            <span class="usage-text" id="usage-text">Loading...</span>
+                            <div class="usage-bar">
+                                <div class="usage-fill" id="usage-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Hello! I'm your AI career assistant. You can ask me questions like:</p>
+                                <ul>
+                                    <li>"What can I become if I love coding and problem-solving?"</li>
+                                    <li>"Suggest a career after 12th commerce with good salary"</li>
+                                    <li>"What skills do I need to become a data scientist?"</li>
+                                </ul>
+                                <p>I'm powered by ChatGPT and ready to help you discover your perfect career path!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-container">
+                        <div class="chat-input">
+                            <input type="text" id="chat-input" placeholder="Ask me about careers...">
+                            <button id="send-message">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="quick-questions">
+                            <button class="quick-question" data-question="What are the highest paying careers in tech?">Tech Careers</button>
+                            <button class="quick-question" data-question="What can I do with a commerce background?">Commerce Paths</button>
+                            <button class="quick-question" data-question="Best careers for creative people?">Creative Careers</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Interest Form Page -->
         <div id="interest-form-page" class="page">
             <div class="container">
@@ -143,48 +216,6 @@
                             <i class="fas fa-download"></i>
                             Download Career Report
                         </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- AI Chat Page -->
-        <div id="ai-chat-page" class="page">
-            <div class="container">
-                <div class="page-header">
-                    <h1>AI Career Assistant</h1>
-                    <p>Ask me anything about careers, education, and your future!</p>
-                </div>
-
-                <div class="chat-container">
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="message bot-message">
-                            <div class="message-avatar">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div class="message-content">
-                                <p>Hello! I'm your AI career assistant. You can ask me questions like:</p>
-                                <ul>
-                                    <li>"What can I become if I love coding and problem-solving?"</li>
-                                    <li>"Suggest a career after 12th commerce with good salary"</li>
-                                    <li>"What skills do I need to become a data scientist?"</li>
-                                </ul>
-                                <p><strong>Note:</strong> For the best AI experience, add your OpenAI API key using the button above. Otherwise, I'll use demo responses.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-input-container">
-                        <div class="chat-input">
-                            <input type="text" id="chat-input" placeholder="Ask me about careers...">
-                            <button id="send-message">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                        <div class="quick-questions">
-                            <button class="quick-question" data-question="What are the highest paying careers in tech?">Tech Careers</button>
-                            <button class="quick-question" data-question="What can I do with a commerce background?">Commerce Paths</button>
-                            <button class="quick-question" data-question="Best careers for creative people?">Creative Careers</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -331,6 +362,114 @@
         </div>
     </main>
 
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Career Dendrogram</span>
+                    </div>
+                    <p>Empowering students and professionals to discover their perfect career path through AI-powered guidance and comprehensive resources.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#" data-page="home">Home</a></li>
+                        <li><a href="#" data-page="ai-chat">AI Chat</a></li>
+                        <li><a href="#" data-page="careers">Careers</a></li>
+                        <li><a href="#" data-page="colleges">Colleges</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#" data-page="interest-form">Interest Assessment</a></li>
+                        <li><a href="#" data-page="quiz">Personality Quiz</a></li>
+                        <li><a href="#">Career Reports</a></li>
+                        <li><a href="#">Study Materials</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#" data-page="contact">Contact Us</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Career Dendrogram. All rights reserved.</p>
+                <p>Made with <i class="fas fa-heart"></i> for students and professionals</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Upgrade Modal -->
+    <div class="upgrade-modal" id="upgrade-modal" style="display: none;">
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Upgrade Your Plan</h3>
+                    <button class="modal-close" onclick="closeUpgradeModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <p class="upgrade-message">You've reached your chat limit! Upgrade to continue getting AI-powered career guidance.</p>
+                    
+                    <div class="plans-grid">
+                        <div class="plan-card">
+                            <div class="plan-header">
+                                <h4>Monthly Plan</h4>
+                                <div class="plan-price">$5<span>/month</span></div>
+                            </div>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check"></i> 1,000 AI chat interactions</li>
+                                <li><i class="fas fa-check"></i> Advanced career guidance</li>
+                                <li><i class="fas fa-check"></i> Personality quiz</li>
+                                <li><i class="fas fa-check"></i> Career reports</li>
+                                <li><i class="fas fa-check"></i> Priority support</li>
+                            </ul>
+                            <button class="btn-primary" onclick="upgradePlan('monthly')">Choose Monthly</button>
+                        </div>
+                        
+                        <div class="plan-card popular">
+                            <div class="plan-badge">Most Popular</div>
+                            <div class="plan-header">
+                                <h4>Quarterly Plan</h4>
+                                <div class="plan-price">$10<span>/3 months</span></div>
+                                <div class="plan-savings">Save 33%!</div>
+                            </div>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check"></i> 3,000 AI chat interactions</li>
+                                <li><i class="fas fa-check"></i> All premium features</li>
+                                <li><i class="fas fa-check"></i> Advanced analytics</li>
+                                <li><i class="fas fa-check"></i> Unlimited career reports</li>
+                                <li><i class="fas fa-check"></i> VIP support</li>
+                            </ul>
+                            <button class="btn-primary" onclick="upgradePlan('quarterly')">Choose Quarterly</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loading-overlay">
         <div class="spinner"></div>
@@ -340,7 +479,8 @@
     <!-- Scripts -->
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
-    <script src="js/openai-service.js"></script>
+    <script src="js/services/auth-service.js"></script>
+    <script src="js/services/chat-service.js"></script>
     <script src="js/components.js"></script>
     <script src="js/main.js"></script>
 </body>

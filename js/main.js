@@ -22,6 +22,9 @@ function initializeApp() {
     const savedTheme = getPreferredTheme();
     setTheme(savedTheme);
     
+    // Initialize authentication
+    initializeAuth();
+    
     // Initialize components
     initializeComponents();
     
@@ -38,8 +41,50 @@ function initializeApp() {
     
     // Show welcome notification
     setTimeout(() => {
-        showNotification('Welcome to Career Dendrogram! Start exploring your career path.', 'info', 3000);
+        if (authService.isAuthenticated()) {
+            showNotification(`Welcome back, ${authService.user.name}!`, 'success', 3000);
+        } else {
+            showNotification('Welcome to Career Dendrogram! Sign up to get started.', 'info', 3000);
+        }
     }, 1000);
+}
+
+function initializeAuth() {
+    const userMenu = $('#user-menu');
+    const authButtons = $('#auth-buttons');
+    const userName = $('#user-name');
+    const userPlan = $('#user-plan');
+    const userBtn = $('#user-btn');
+    const dropdownMenu = $('#dropdown-menu');
+
+    if (authService.isAuthenticated()) {
+        // Show user menu
+        if (userMenu) userMenu.style.display = 'flex';
+        if (authButtons) authButtons.style.display = 'none';
+        
+        // Update user info
+        if (userName) userName.textContent = authService.user.name;
+        if (userPlan) {
+            userPlan.textContent = authService.user.plan;
+            userPlan.className = `user-plan ${authService.user.plan}`;
+        }
+        
+        // Handle dropdown
+        if (userBtn && dropdownMenu) {
+            userBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', () => {
+                dropdownMenu.classList.remove('show');
+            });
+        }
+    } else {
+        // Show auth buttons
+        if (userMenu) userMenu.style.display = 'none';
+        if (authButtons) authButtons.style.display = 'flex';
+    }
 }
 
 function setupGlobalEventListeners() {
@@ -106,16 +151,6 @@ function handleScroll() {
     } else {
         navbar.classList.remove('scrolled');
     }
-    
-    // Show/hide scroll to top button
-    const scrollToTop = $('#scroll-to-top');
-    if (scrollToTop) {
-        if (window.scrollY > 500) {
-            scrollToTop.style.display = 'block';
-        } else {
-            scrollToTop.style.display = 'none';
-        }
-    }
 }
 
 function handleKeyboardShortcuts(e) {
@@ -132,34 +167,28 @@ function handleKeyboardShortcuts(e) {
     if (e.key === 'Escape') {
         const navMenu = $('#nav-menu');
         const mobileToggle = $('#mobile-menu-toggle');
+        const upgradeModal = $('#upgrade-modal');
         
         if (navMenu && navMenu.classList.contains('active')) {
             navMenu.classList.remove('active');
             mobileToggle.classList.remove('active');
         }
-    }
-    
-    // Arrow keys for quiz navigation
-    if (currentPage === 'quiz') {
-        if (e.key === 'ArrowLeft' && typeof previousQuestion === 'function') {
-            previousQuestion();
-        } else if (e.key === 'ArrowRight' && typeof nextQuestion === 'function') {
-            nextQuestion();
+        
+        if (upgradeModal && upgradeModal.style.display !== 'none') {
+            closeUpgradeModal();
         }
     }
 }
 
 function handleVisibilityChange() {
     if (document.hidden) {
-        // Page is hidden (user switched tabs)
         console.log('Page hidden');
     } else {
-        // Page is visible again
         console.log('Page visible');
         
-        // Refresh any time-sensitive data if needed
-        if (currentPage === 'ai-chat') {
-            // Could refresh chat status or check for new messages
+        // Refresh user data if authenticated
+        if (authService.isAuthenticated()) {
+            authService.getProfile();
         }
     }
 }
@@ -169,6 +198,14 @@ function navigateToPage(pageName, addToHistory = true) {
     if (!pageName) return;
     
     try {
+        // Check if user needs to be authenticated for certain pages
+        const protectedPages = ['ai-chat'];
+        if (protectedPages.includes(pageName) && !authService.isAuthenticated()) {
+            showNotification('Please login to access this feature', 'warning');
+            window.location.href = 'pages/login.html';
+            return;
+        }
+        
         // Hide all pages
         const pages = $$('.page');
         pages.forEach(page => {
@@ -203,9 +240,6 @@ function navigateToPage(pageName, addToHistory = true) {
             // Update page title
             updatePageTitle(pageName);
             
-            // Track page view (for analytics if implemented)
-            trackPageView(pageName);
-            
         } else {
             console.warn(`Page not found: ${pageName}`);
             showNotification('Page not found', 'error');
@@ -229,26 +263,105 @@ function updatePageTitle(pageName) {
     document.title = titles[pageName] || 'Career Dendrogram';
 }
 
-function trackPageView(pageName) {
-    // Placeholder for analytics tracking
-    console.log(`Page view: ${pageName}`);
-    
-    // In a real implementation, you might send data to Google Analytics, etc.
-    // gtag('config', 'GA_MEASUREMENT_ID', {
-    //     page_title: document.title,
-    //     page_location: window.location.href
-    // });
+// Upgrade modal functions
+function showUpgradeModal() {
+    const modal = $('#upgrade-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
 }
 
-// Handle browser back/forward buttons
-window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.page) {
-        navigateToPage(e.state.page, false);
-    } else {
-        // Default to home page
-        navigateToPage('home', false);
+function closeUpgradeModal() {
+    const modal = $('#upgrade-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
     }
-});
+}
+
+async function upgradePlan(plan) {
+    try {
+        showLoading();
+        
+        // Simulate payment processing
+        await simulateDelay(2000);
+        
+        const result = await authService.upgradePlan(plan);
+        
+        if (result.success) {
+            hideLoading();
+            closeUpgradeModal();
+            showNotification(`Successfully upgraded to ${plan} plan!`, 'success');
+            
+            // Update UI
+            initializeAuth();
+            updateChatStatus();
+        } else {
+            hideLoading();
+            showNotification(result.error || 'Upgrade failed', 'error');
+        }
+    } catch (error) {
+        hideLoading();
+        showNotification('Upgrade failed. Please try again.', 'error');
+    }
+}
+
+// Profile and upgrade functions
+function showProfile() {
+    if (!authService.isAuthenticated()) return;
+    
+    const user = authService.user;
+    const chatLimits = {
+        free: 30,
+        monthly: 1000,
+        quarterly: 3000
+    };
+    
+    const limit = chatLimits[user.plan] || 30;
+    const percentage = Math.round((user.chatCount / limit) * 100);
+    
+    showNotification(
+        `Profile: ${user.name}\nPlan: ${user.plan.toUpperCase()}\nChats used: ${user.chatCount}/${limit} (${percentage}%)`,
+        'info',
+        5000
+    );
+}
+
+function showUpgrade() {
+    showUpgradeModal();
+}
+
+// Chat status update
+function updateChatStatus() {
+    if (!authService.isAuthenticated()) return;
+    
+    const usageText = $('#usage-text');
+    const usageFill = $('#usage-fill');
+    
+    if (!usageText || !usageFill) return;
+    
+    const user = authService.user;
+    const chatLimits = {
+        free: 30,
+        monthly: 1000,
+        quarterly: 3000
+    };
+    
+    const limit = chatLimits[user.plan] || 30;
+    const percentage = (user.chatCount / limit) * 100;
+    
+    usageText.textContent = `${user.chatCount}/${limit} chats used (${user.plan.toUpperCase()} plan)`;
+    usageFill.style.width = `${Math.min(percentage, 100)}%`;
+    
+    // Update color based on usage
+    usageFill.className = 'usage-fill';
+    if (percentage >= 90) {
+        usageFill.classList.add('danger');
+    } else if (percentage >= 70) {
+        usageFill.classList.add('warning');
+    }
+}
 
 // Enhanced error handling with user feedback
 function handleError(error, context = '') {
@@ -265,153 +378,29 @@ function handleError(error, context = '') {
     }
     
     showNotification(message, 'error');
-    
-    // Log error for debugging (in production, send to error tracking service)
-    const errorLog = {
-        timestamp: new Date().toISOString(),
-        context,
-        error: {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-        },
-        userAgent: navigator.userAgent,
-        url: window.location.href
-    };
-    
-    console.log('Error log:', errorLog);
 }
 
-// Performance monitoring
-function measurePerformance() {
-    if ('performance' in window) {
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const perfData = performance.getEntriesByType('navigation')[0];
-                const loadTime = perfData.loadEventEnd - perfData.loadEventStart;
-                
-                console.log(`Page load time: ${loadTime}ms`);
-                
-                // Log slow loading
-                if (loadTime > 3000) {
-                    console.warn('Slow page load detected');
-                }
-            }, 0);
-        });
+// Handle browser back/forward buttons
+window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.page) {
+        navigateToPage(e.state.page, false);
+    } else {
+        navigateToPage('home', false);
     }
-}
+});
 
-// Initialize performance monitoring
-measurePerformance();
+// Global functions
+window.navigateToPage = navigateToPage;
+window.showUpgradeModal = showUpgradeModal;
+window.closeUpgradeModal = closeUpgradeModal;
+window.upgradePlan = upgradePlan;
+window.showProfile = showProfile;
+window.showUpgrade = showUpgrade;
+window.updateChatStatus = updateChatStatus;
 
-// Service worker registration (for future PWA features)
-function registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then((registration) => {
-                    console.log('SW registered: ', registration);
-                })
-                .catch((registrationError) => {
-                    console.log('SW registration failed: ', registrationError);
-                });
-        });
-    }
-}
-
-// Accessibility enhancements
-function enhanceAccessibility() {
-    // Add skip link for keyboard navigation
-    const skipLink = document.createElement('a');
-    skipLink.href = '#main-content';
-    skipLink.textContent = 'Skip to main content';
-    skipLink.className = 'skip-link';
-    skipLink.style.cssText = `
-        position: absolute;
-        top: -40px;
-        left: 6px;
-        background: var(--primary-blue);
-        color: white;
-        padding: 8px;
-        text-decoration: none;
-        border-radius: 4px;
-        z-index: 10000;
-        transition: top 0.3s;
-    `;
-    
-    skipLink.addEventListener('focus', () => {
-        skipLink.style.top = '6px';
-    });
-    
-    skipLink.addEventListener('blur', () => {
-        skipLink.style.top = '-40px';
-    });
-    
-    document.body.insertBefore(skipLink, document.body.firstChild);
-    
-    // Announce page changes to screen readers
-    const announcer = document.createElement('div');
-    announcer.setAttribute('aria-live', 'polite');
-    announcer.setAttribute('aria-atomic', 'true');
-    announcer.style.cssText = `
-        position: absolute;
-        left: -10000px;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-    `;
-    document.body.appendChild(announcer);
-    
-    // Function to announce page changes
-    window.announcePageChange = (pageName) => {
-        const pageNames = {
-            'home': 'Home page',
-            'ai-chat': 'AI Career Assistant page',
-            'interest-form': 'Career Interest Form page',
-            'quiz': 'Career Personality Quiz page',
-            'careers': 'Career Paths page',
-            'colleges': 'Colleges and Exams page',
-            'contact': 'Contact page'
-        };
-        
-        announcer.textContent = `Navigated to ${pageNames[pageName] || pageName}`;
-    };
-}
-
-// Initialize accessibility enhancements
-enhanceAccessibility();
-
-// Utility functions for global use
-window.CareerDendrogram = {
-    navigateToPage,
-    showNotification,
-    handleError,
-    getCurrentPage: () => currentPage,
-    isInitialized: () => isInitialized
-};
-
-// Debug mode for development
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    window.debug = {
-        careersData,
-        interestsData,
-        quizQuestions,
-        personalityTypes,
-        collegesData,
-        currentPage: () => currentPage,
-        navigateToPage,
-        showNotification
-    };
-    
-    console.log('Debug mode enabled. Access debug object via window.debug');
-}
-
-// Export for testing
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        initializeApp,
-        navigateToPage,
-        handleError,
-        trackPageView
-    };
+// Initialize app when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
 }
